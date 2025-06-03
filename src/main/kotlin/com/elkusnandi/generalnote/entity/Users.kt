@@ -8,9 +8,9 @@ data class Users(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long,
+    val id: Long = -1,
     @Column(name = "username")
-    val userName: String,
+    val userName: String = "",
     @Column(name = "password")
-    val password: String
+    val password: String = ""
 )
