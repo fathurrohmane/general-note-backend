@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : JpaRepository<Users, Long> {
 
-    fun findByUserName(userName: String): Users?
+    fun findByUserName(userName: String?): Users?
 
 }

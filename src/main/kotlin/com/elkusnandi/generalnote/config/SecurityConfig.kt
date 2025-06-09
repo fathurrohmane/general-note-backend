@@ -1,5 +1,6 @@
 package com.elkusnandi.generalnote.config
 
+import com.elkusnandi.generalnote.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.Customizer.withDefaults
@@ -10,7 +11,9 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+    private val userService: UserService
+) {
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -21,6 +24,7 @@ class SecurityConfig {
                     .requestMatchers("/api/auth/**").permitAll()
                     .anyRequest().authenticated()
             }
+            .userDetailsService(userService)
             .httpBasic(withDefaults())
 
         return http.build()
