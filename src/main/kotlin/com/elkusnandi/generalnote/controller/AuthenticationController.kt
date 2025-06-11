@@ -22,7 +22,7 @@ class AuthenticationController(
         val currentUser = userService.login(loginRequest)
 
         return if (currentUser != null && bcrypt.matches(loginRequest.password, currentUser.password)) {
-            val token = JwtUtil.generateToken(currentUser.userName)
+            val token = JwtUtil.generateToken(currentUser.id.toString())
             ResponseEntity(token, HttpStatus.OK)
         } else {
             ResponseEntity("Username or password not match", HttpStatus.BAD_REQUEST)

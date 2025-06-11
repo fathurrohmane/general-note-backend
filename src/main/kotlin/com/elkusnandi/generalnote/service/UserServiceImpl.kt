@@ -28,14 +28,14 @@ class UserServiceImpl(
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {
-        val currentUser = userRepository.findByUserName(username)
+        val currentUser = userRepository.findById(username?.toLong() ?: -1)
 
-        if (currentUser == null) {
+        if (currentUser.isEmpty) {
             throw NullPointerException()
         } else {
             return User.builder()
-                .username(currentUser.userName)
-                .password(currentUser.password)
+                .username(currentUser.get().id.toString())
+                .password(currentUser.get().password)
                 .roles("user")
                 .build()
         }
