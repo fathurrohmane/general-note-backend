@@ -4,7 +4,6 @@ import com.elkusnandi.generalnote.filter.JwtRequestFilter
 import com.elkusnandi.generalnote.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -26,10 +25,10 @@ class SecurityConfig(
             .sessionManagement { sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/auth/**")
-                    .permitAll()
-                    .anyRequest()
+                    .requestMatchers("/api/**") // need authentication selected end point
                     .authenticated()
+                    .anyRequest() // grant all access for other end point
+                    .permitAll()
             }
             .userDetailsService(userService)
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)

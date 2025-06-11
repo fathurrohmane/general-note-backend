@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 @Validated
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("/public/api/auth")
 class AuthenticationController(
     private val userService: UserService,
     private val bcrypt: BCryptPasswordEncoder
