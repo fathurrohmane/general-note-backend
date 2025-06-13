@@ -1,10 +1,10 @@
 package com.elkusnandi.generalnote.controller
 
+import com.elkusnandi.generalnote.common.base.BaseResponse
 import com.elkusnandi.generalnote.request.RegisterRequest
 import com.elkusnandi.generalnote.service.UserService
 import com.elkusnandi.generalnote.util.JwtUtil
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -18,20 +18,20 @@ class AuthenticationController(
 ) {
 
     @GetMapping("/login")
-    fun login(@RequestBody loginRequest: RegisterRequest): ResponseEntity<String> {
+    fun login(@RequestBody loginRequest: RegisterRequest): BaseResponse<String> {
         val currentUser = userService.login(loginRequest)
 
         return if (currentUser != null && bcrypt.matches(loginRequest.password, currentUser.password)) {
             val token = JwtUtil.generateToken(currentUser.id.toString())
-            ResponseEntity(token, HttpStatus.OK)
+            BaseResponse(token, HttpStatus.OK)
         } else {
-            ResponseEntity("Username or password not match", HttpStatus.BAD_REQUEST)
+            BaseResponse(message = "Username or password not match", status = HttpStatus.BAD_REQUEST)
         }
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody registerRequest: RegisterRequest): String {
-        return userService.register(registerRequest).id.toString()
+    fun register(@RequestBody registerRequest: RegisterRequest): BaseResponse<Boolean> {
+        return BaseResponse(userService.register(registerRequest).id > -1, HttpStatus.OK)
     }
 
 }
