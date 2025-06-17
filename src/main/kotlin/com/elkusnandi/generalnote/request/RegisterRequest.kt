@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 
 data class RegisterRequest(
-    @NotBlank
-    @Size(min = 4, max = 40)
+    @field:NotBlank
+    @field:Size(min = 4, max = 40)
     val userName: String,
-    @Size(min = 6, max = 40)
+    @field:Size(min = 6, max = 40)
     val password: String
 )
