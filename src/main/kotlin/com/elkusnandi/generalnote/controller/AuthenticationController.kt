@@ -2,8 +2,10 @@ package com.elkusnandi.generalnote.controller
 
 import com.elkusnandi.generalnote.common.base.BaseResponse
 import com.elkusnandi.generalnote.request.RegisterRequest
+import com.elkusnandi.generalnote.response.RegisterResponse
 import com.elkusnandi.generalnote.service.UserService
 import com.elkusnandi.generalnote.util.JwtUtil
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.validation.annotation.Validated
@@ -30,8 +32,8 @@ class AuthenticationController(
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody registerRequest: RegisterRequest): BaseResponse<Boolean> {
-        return BaseResponse(userService.register(registerRequest).id > -1, HttpStatus.OK)
+    fun register(@Valid @RequestBody registerRequest: RegisterRequest): BaseResponse<RegisterResponse> {
+        return BaseResponse(userService.register(registerRequest), HttpStatus.CREATED)
     }
 
 }
