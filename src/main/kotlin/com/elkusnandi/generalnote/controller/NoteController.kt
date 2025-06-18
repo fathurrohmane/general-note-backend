@@ -58,8 +58,9 @@ class NoteController(
     }
 
     @DeleteMapping("/{noteId}")
-    fun deleteNote(@PathVariable noteId: String) {
+    fun deleteNote(@PathVariable noteId: String) : BaseResponse<*> {
         noteService.deleteNote(noteId = noteId.toLong())
+        return BaseResponse(data = null, status = HttpStatus.OK)
     }
 
 }
