@@ -48,7 +48,7 @@ class NoteController(
         return BaseResponse(
             data = noteService.upsertNote(
                 Notes(
-                    note.id,
+                    noteId,
                     note.title,
                     note.content,
                     Users(id = userDetails.username.toLong())
