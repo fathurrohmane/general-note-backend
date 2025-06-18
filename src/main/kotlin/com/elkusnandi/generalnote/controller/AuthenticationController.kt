@@ -15,7 +15,7 @@ class AuthenticationController(
     private val userService: UserService
 ) {
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     fun login(@Valid @RequestBody loginRequest: RegisterRequest): BaseResponse<LoginResponse> {
         return BaseResponse(userService.login(loginRequest), HttpStatus.OK)
     }
