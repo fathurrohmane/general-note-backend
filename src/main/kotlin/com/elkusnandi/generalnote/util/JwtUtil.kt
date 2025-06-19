@@ -1,9 +1,8 @@
 package com.elkusnandi.generalnote.util
 
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
+import io.jsonwebtoken.security.SignatureException
 import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
@@ -31,7 +30,20 @@ object JwtUtil {
             .parseClaimsJws(token).body
 
     fun isValid(token: String, userId: String): Boolean {
-        return getAllClaims(token).subject == userId && getAllClaims(token).expiration.after(Date())
+        try {
+            return getAllClaims(token).subject == userId && getAllClaims(token).expiration.after(Date())
+        } catch (_: SignatureException) {
+
+        } catch (_: MalformedJwtException) {
+
+        } catch (_: ExpiredJwtException) {
+
+        } catch (_: UnsupportedJwtException) {
+
+        } catch (_: IllegalArgumentException) {
+
+        }
+        return false
     }
 
 }
