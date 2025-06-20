@@ -5,6 +5,7 @@ import com.elkusnandi.generalnote.repository.UserRepository
 import com.elkusnandi.generalnote.request.RegisterRequest
 import com.elkusnandi.generalnote.response.LoginResponse
 import com.elkusnandi.generalnote.response.RegisterResponse
+import com.elkusnandi.generalnote.response.UserResponse
 import com.elkusnandi.generalnote.util.JwtUtil
 import org.apache.coyote.BadRequestException
 import org.springframework.security.core.userdetails.User
@@ -51,6 +52,12 @@ class UserServiceImpl(
         }
     }
 
+    override fun getAllUsers(): List<UserResponse> {
+        return userRepository.findAll().map {
+            UserResponse(it.id, it.userName, it.password)
+        }
+    }
+
     override fun loadUserByUsername(username: String?): UserDetails {
         val currentUser = userRepository.findById(username?.toLong() ?: -1)
 
@@ -60,7 +67,13 @@ class UserServiceImpl(
             return User.builder()
                 .username(currentUser.get().id.toString())
                 .password(currentUser.get().password)
-                .roles("user")
+                .roles(
+                    if (currentUser.get().userName == "admin") {
+                        "admin"
+                    } else {
+                        "user"
+                    }
+                )
                 .build()
         }
     }
