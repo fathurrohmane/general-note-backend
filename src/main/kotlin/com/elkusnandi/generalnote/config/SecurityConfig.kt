@@ -32,10 +32,10 @@ class SecurityConfig(
             .sessionManagement { sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/**") // need authentication selected end point
-                    .authenticated()
-                    .anyRequest() // grant all access for other end point
+                    .requestMatchers("/public/api/**") // need authentication selected end point
                     .permitAll()
+                    .anyRequest()
+                    .authenticated()
             }
             .userDetailsService(userService)
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
