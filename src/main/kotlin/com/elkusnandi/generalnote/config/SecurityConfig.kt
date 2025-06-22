@@ -32,7 +32,11 @@ class SecurityConfig(
             .sessionManagement { sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/public/api/**") // need authentication selected end point
+                    .requestMatchers(
+                        "/public/api/**",
+                        "/swagger-ui/**",
+                        "/v3/**"
+                    ) // need authentication selected end point
                     .permitAll()
                     .anyRequest()
                     .authenticated()
