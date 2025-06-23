@@ -14,4 +14,6 @@ interface UserService : UserDetailsService {
 
     fun getAllUsers(): List<UserResponse>
 
+    fun addRoleToUser(userId: Long, userRoles: List<Long>): UserResponse
+
 }

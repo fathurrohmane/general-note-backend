@@ -4,6 +4,7 @@ import com.elkusnandi.generalnote.common.base.BaseResponse
 import org.apache.coyote.BadRequestException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -48,6 +49,17 @@ class GlobalExceptionHandler {
         return BaseResponse(
             data = null,
             status = HttpStatus.INTERNAL_SERVER_ERROR,
+            success = false,
+            ex?.message.toString()
+        )
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException::class)
+    @ResponseBody
+    fun handleGlobalException(ex: AuthorizationDeniedException?): ResponseEntity<*> {
+        return BaseResponse(
+            data = null,
+            status = HttpStatus.FORBIDDEN,
             success = false,
             ex?.message.toString()
         )

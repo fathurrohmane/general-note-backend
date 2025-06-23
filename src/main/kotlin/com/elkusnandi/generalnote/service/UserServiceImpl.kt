@@ -1,10 +1,12 @@
 package com.elkusnandi.generalnote.service
 
 import com.elkusnandi.generalnote.entity.Users
+import com.elkusnandi.generalnote.repository.RoleRepository
 import com.elkusnandi.generalnote.repository.UserRepository
 import com.elkusnandi.generalnote.request.RegisterRequest
 import com.elkusnandi.generalnote.response.LoginResponse
 import com.elkusnandi.generalnote.response.RegisterResponse
+import com.elkusnandi.generalnote.response.RoleResponse
 import com.elkusnandi.generalnote.response.UserResponse
 import com.elkusnandi.generalnote.util.JwtUtil
 import org.apache.coyote.BadRequestException
@@ -12,10 +14,12 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
+    private val roleRepository: RoleRepository,
     private val bcrypt: BCryptPasswordEncoder
 ) : UserService {
 
@@ -54,8 +58,32 @@ class UserServiceImpl(
 
     override fun getAllUsers(): List<UserResponse> {
         return userRepository.findAll().map {
-            UserResponse(it.id, it.userName, it.password)
+            UserResponse(it.id, it.userName, it.password, it.roles.map { role -> RoleResponse(role.id, role.name) })
         }
+    }
+
+    override fun addRoleToUser(userId: Long, userRoles: List<Long>): UserResponse {
+        val currentUser = userRepository.findById(userId)
+
+        val roles = roleRepository.findAllById(userRoles)
+
+        val newUser = userRepository.save(
+            currentUser.get().apply {
+                this.roles = roles.toMutableSet()
+            }
+        )
+
+        return UserResponse(
+            id = newUser.id,
+            userName = newUser.userName,
+            password = newUser.password,
+            roles = newUser.roles.map {
+                RoleResponse(
+                    it.id,
+                    it.name
+                )
+            }
+        )
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {
@@ -67,13 +95,7 @@ class UserServiceImpl(
             return User.builder()
                 .username(currentUser.get().id.toString())
                 .password(currentUser.get().password)
-                .roles(
-                    if (currentUser.get().userName == "admin") {
-                        "admin"
-                    } else {
-                        "user"
-                    }
-                )
+                .roles(*currentUser.get().roles.map { it.name }.toTypedArray())
                 .build()
         }
     }

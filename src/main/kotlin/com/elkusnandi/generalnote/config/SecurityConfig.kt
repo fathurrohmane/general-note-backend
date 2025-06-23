@@ -35,7 +35,8 @@ class SecurityConfig(
                     .requestMatchers(
                         "/public/api/**",
                         "/swagger-ui/**",
-                        "/v3/**"
+                        "/v3/**",
+                        "/error"
                     ) // need authentication selected end point
                     .permitAll()
                     .anyRequest()
