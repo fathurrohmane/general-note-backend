@@ -14,7 +14,7 @@ class SwaggerConfig {
     fun customOpenAPI(): OpenAPI {
         val securitySchemeName = "bearerAuth"
         return OpenAPI()
-            .info(Info().title("My API").version("1.0"))
+            .info(Info().title("General Note").version("0.1"))
             .addSecurityItem(SecurityRequirement().addList(securitySchemeName))
             .components(
                 Components()
