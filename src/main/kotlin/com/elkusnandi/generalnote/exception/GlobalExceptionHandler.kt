@@ -65,6 +65,17 @@ class GlobalExceptionHandler {
         )
     }
 
+    @ExceptionHandler(UserFaultException::class)
+    @ResponseBody
+    fun handleGlobalException(ex: UserFaultException?): ResponseEntity<*> {
+        return BaseResponse(
+            data = null,
+            status = ex?.httpCode ?: HttpStatus.INTERNAL_SERVER_ERROR,
+            success = false,
+            ex?.message.toString()
+        )
+    }
+
     @ExceptionHandler(BadRequestException::class)
     @ResponseBody
     fun resolveException(exception: BadRequestException): ResponseEntity<*> {
