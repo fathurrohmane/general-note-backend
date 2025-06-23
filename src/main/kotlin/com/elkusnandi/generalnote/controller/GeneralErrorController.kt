@@ -1,6 +1,7 @@
 package com.elkusnandi.generalnote.controller
 
 import com.elkusnandi.generalnote.common.base.BaseResponse
+import io.swagger.v3.oas.annotations.Hidden
 import jakarta.servlet.RequestDispatcher
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.boot.web.servlet.error.ErrorController
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/error")
 class GeneralErrorController : ErrorController {
+
+    @Hidden
     @RequestMapping
     fun handleError(request: HttpServletRequest): BaseResponse<Void> {
         val status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE)
