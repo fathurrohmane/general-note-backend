@@ -36,6 +36,24 @@ class NoteController(
     }
 
     @Operation(
+        summary = "Get single note",
+        description = "Get a note based on noteId and user id from access token"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Note"),
+            ApiResponse(responseCode = "403", description = "Access denied")
+        ]
+    )
+    @GetMapping("/{noteId}")
+    fun getNote(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable(name = "noteId") noteId: Long
+    ): BaseResponse<NotesResponse> {
+        return BaseResponse(data = noteService.getNote(userDetails.username.toLong(), noteId), status = HttpStatus.OK)
+    }
+
+    @Operation(
         summary = "Create new note",
         description = "Create new note for current user based on user id from access token"
     )
@@ -101,7 +119,7 @@ class NoteController(
         ]
     )
     @DeleteMapping("/{noteId}")
-    fun deleteNote(@PathVariable noteId: String) : BaseResponse<*> {
+    fun deleteNote(@PathVariable noteId: String): BaseResponse<*> {
         noteService.deleteNote(noteId = noteId.toLong())
         return BaseResponse(data = null, status = HttpStatus.OK)
     }

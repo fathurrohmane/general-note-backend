@@ -1,9 +1,11 @@
 package com.elkusnandi.generalnote.service
 
 import com.elkusnandi.generalnote.entity.Notes
+import com.elkusnandi.generalnote.exception.UserFaultException
 import com.elkusnandi.generalnote.repository.NoteRepository
 import com.elkusnandi.generalnote.repository.UserRepository
 import com.elkusnandi.generalnote.response.NotesResponse
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,6 +20,18 @@ class NoteServiceImpl(
                 it.title,
                 it.content
             )
+        }
+    }
+
+    override fun getNote(ownerId: Long, noteId: Long): NotesResponse {
+        return noteRepository.findById(noteId).map {
+            NotesResponse(
+                it.id,
+                it.title,
+                it.content
+            )
+        }.orElseThrow {
+            UserFaultException(HttpStatus.NOT_FOUND, "Not found")
         }
     }
 
