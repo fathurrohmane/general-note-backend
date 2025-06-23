@@ -1,5 +1,6 @@
 package com.elkusnandi.generalnote.service
 
+import com.elkusnandi.generalnote.entity.Role
 import com.elkusnandi.generalnote.entity.Users
 import com.elkusnandi.generalnote.repository.RoleRepository
 import com.elkusnandi.generalnote.repository.UserRepository
@@ -14,7 +15,6 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserServiceImpl(
@@ -29,11 +29,22 @@ class UserServiceImpl(
             throw BadRequestException("username already registered")
         }
 
+        val adminRole = roleRepository.findByName("admin")
+        val userRole = roleRepository.findByName("user") ?: throw IllegalStateException("Missing user role data")
+        val roles = mutableSetOf<Role>()
+
+        if (registerRequest.userName == "admin" && adminRole != null) {
+            roles.add(adminRole)
+        }
+        roles.add(userRole)
+
         val newUser = userRepository.save(
             Users(
                 userName = registerRequest.userName.trim().lowercase(),
-                password = bcrypt.encode(registerRequest.password)
-            )
+                password = bcrypt.encode(registerRequest.password),
+            ).apply {
+                this.roles = roles
+            }
         )
 
         return RegisterResponse(

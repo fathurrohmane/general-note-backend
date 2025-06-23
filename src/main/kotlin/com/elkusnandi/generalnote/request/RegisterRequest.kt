@@ -9,7 +9,7 @@ data class RegisterRequest(
     @field:Size(min = 4, max = 40)
     @Schema(
         description = "Username",
-        example = "john_doe",
+        example = "admin",
         minLength = 4,
         maxLength = 40
     )
@@ -17,7 +17,7 @@ data class RegisterRequest(
     @field:Size(min = 6, max = 40)
     @Schema(
         description = "Password (no regex)",
-        example = "(CurrentAdmin147)",
+        example = "123456",
         minLength = 6,
         maxLength = 40
     )

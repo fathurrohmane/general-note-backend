@@ -9,7 +9,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-//@Component
+@Component
 class InitAdmin : CommandLineRunner {
 
     @Autowired
@@ -23,24 +23,19 @@ class InitAdmin : CommandLineRunner {
 
     @Transactional
     override fun run(vararg args: String?) {
-        val adminRole = roleRepository.save(
+        if (roleRepository.count() > 0) {
+            return
+        }
+
+        roleRepository.save(
             Role(
                 name = "admin"
             )
         )
-        val userRole = roleRepository.save(
+        roleRepository.save(
             Role(
                 name = "user"
             )
         )
-        val users = userRepository.findAll()
-        users.forEach {
-            val roleIds = if (it.userName.contains("admin")) {
-                listOf(adminRole.id, userRole.id)
-            } else {
-                listOf(userRole.id)
-            }
-            userService.addRoleToUser(it.id, roleIds)
-        }
     }
 }
