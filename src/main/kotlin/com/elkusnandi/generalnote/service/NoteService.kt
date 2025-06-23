@@ -1,6 +1,6 @@
 package com.elkusnandi.generalnote.service
 
-import com.elkusnandi.generalnote.entity.Notes
+import com.elkusnandi.generalnote.request.NoteRequest
 import com.elkusnandi.generalnote.response.NotesResponse
 
 interface NoteService {
@@ -9,8 +9,8 @@ interface NoteService {
 
     fun getNote(ownerId: Long, noteId: Long): NotesResponse
 
-    fun upsertNote(note: Notes): NotesResponse
+    fun upsertNote(ownerId: Long, note: NoteRequest): NotesResponse
 
-    fun deleteNote(noteId: Long)
+    fun deleteNote(ownerId: Long, noteId: Long)
 
 }

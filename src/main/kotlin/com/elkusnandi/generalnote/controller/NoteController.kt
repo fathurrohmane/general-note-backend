@@ -1,8 +1,6 @@
 package com.elkusnandi.generalnote.controller
 
 import com.elkusnandi.generalnote.common.base.BaseResponse
-import com.elkusnandi.generalnote.entity.Notes
-import com.elkusnandi.generalnote.entity.Users
 import com.elkusnandi.generalnote.request.NoteRequest
 import com.elkusnandi.generalnote.response.NotesResponse
 import com.elkusnandi.generalnote.service.NoteService
@@ -69,14 +67,7 @@ class NoteController(
         @RequestBody note: NoteRequest
     ): BaseResponse<NotesResponse> {
         return BaseResponse(
-            data = noteService.upsertNote(
-                Notes(
-                    note.id,
-                    note.title,
-                    note.content,
-                    Users(id = userDetails.username.toLong())
-                )
-            ), status = HttpStatus.OK
+            data = noteService.upsertNote(ownerId = userDetails.username.toLong(), note), status = HttpStatus.OK
         )
     }
 
@@ -97,14 +88,7 @@ class NoteController(
         @RequestBody note: NoteRequest
     ): BaseResponse<NotesResponse> {
         return BaseResponse(
-            data = noteService.upsertNote(
-                Notes(
-                    noteId,
-                    note.title,
-                    note.content,
-                    Users(id = userDetails.username.toLong())
-                )
-            ), status = HttpStatus.OK
+            data = noteService.upsertNote(ownerId = userDetails.username.toLong(), note.copy(id = noteId)), status = HttpStatus.OK
         )
     }
 
@@ -119,8 +103,8 @@ class NoteController(
         ]
     )
     @DeleteMapping("/{noteId}")
-    fun deleteNote(@PathVariable noteId: String): BaseResponse<*> {
-        noteService.deleteNote(noteId = noteId.toLong())
+    fun deleteNote(@AuthenticationPrincipal userDetails: UserDetails, @PathVariable noteId: String): BaseResponse<*> {
+        noteService.deleteNote(ownerId = userDetails.username.toLong(), noteId = noteId.toLong())
         return BaseResponse(data = null, status = HttpStatus.OK)
     }
 
