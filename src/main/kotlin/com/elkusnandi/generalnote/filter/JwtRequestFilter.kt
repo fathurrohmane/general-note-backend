@@ -32,6 +32,8 @@ class JwtRequestFilter(
                     val auth = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
                     auth.details = WebAuthenticationDetailsSource().buildDetails(request)
                     SecurityContextHolder.getContext().authentication = auth
+                } else {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid jwt token")
                 }
             }
         }

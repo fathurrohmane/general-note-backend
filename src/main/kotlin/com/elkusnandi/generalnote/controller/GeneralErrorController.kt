@@ -18,8 +18,9 @@ class GeneralErrorController : ErrorController {
     @RequestMapping
     fun handleError(request: HttpServletRequest): BaseResponse<Void> {
         val status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE)
+        val message: String = (request.getAttribute(RequestDispatcher.ERROR_MESSAGE) ?: "Internal Server Error").toString()
         val statusCode = status?.toString()?.toInt() ?: 500
 
-        return BaseResponse(data = null, status = HttpStatus.valueOf(statusCode), success = false, "Error")
+        return BaseResponse(data = null, status = HttpStatus.valueOf(statusCode), success = false, message)
     }
 }

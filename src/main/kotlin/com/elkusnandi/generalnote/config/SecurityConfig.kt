@@ -1,5 +1,6 @@
 package com.elkusnandi.generalnote.config
 
+import com.elkusnandi.generalnote.exception.CustomAuthenticationEntryPoint
 import com.elkusnandi.generalnote.filter.JwtRequestFilter
 import com.elkusnandi.generalnote.service.UserService
 import org.springframework.context.annotation.Bean
@@ -21,7 +22,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableMethodSecurity
 class SecurityConfig(
     private val userService: UserService,
-    private val jwtRequestFilter: JwtRequestFilter
+    private val jwtRequestFilter: JwtRequestFilter,
+    private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint
 ) {
     @Bean
     @Throws(Exception::class)
@@ -44,6 +46,9 @@ class SecurityConfig(
             }
             .userDetailsService(userService)
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .exceptionHandling { ex ->
+                ex.authenticationEntryPoint(customAuthenticationEntryPoint)
+            }
 
         return http.build()
     }
