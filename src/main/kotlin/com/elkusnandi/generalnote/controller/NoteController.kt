@@ -1,7 +1,8 @@
 package com.elkusnandi.generalnote.controller
 
 import com.elkusnandi.generalnote.common.base.BaseResponse
-import com.elkusnandi.generalnote.request.NoteRequest
+import com.elkusnandi.generalnote.request.CreateNoteRequest
+import com.elkusnandi.generalnote.request.UpdateNoteRequest
 import com.elkusnandi.generalnote.response.NotesResponse
 import com.elkusnandi.generalnote.service.NoteService
 import io.swagger.v3.oas.annotations.Operation
@@ -64,7 +65,7 @@ class NoteController(
     @PostMapping
     fun createNote(
         @AuthenticationPrincipal userDetails: UserDetails,
-        @RequestBody note: NoteRequest
+        @RequestBody note: CreateNoteRequest
     ): BaseResponse<NotesResponse> {
         return BaseResponse(
             data = noteService.upsertNote(ownerId = userDetails.username.toLong(), note), status = HttpStatus.OK
@@ -85,7 +86,7 @@ class NoteController(
     fun updateNote(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable noteId: Long,
-        @RequestBody note: NoteRequest
+        @RequestBody note: UpdateNoteRequest
     ): BaseResponse<NotesResponse> {
         return BaseResponse(
             data = noteService.upsertNote(ownerId = userDetails.username.toLong(), note.copy(id = noteId)), status = HttpStatus.OK
