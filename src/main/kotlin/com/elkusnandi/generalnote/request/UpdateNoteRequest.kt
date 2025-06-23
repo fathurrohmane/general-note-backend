@@ -1,5 +1,6 @@
 package com.elkusnandi.generalnote.request
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.swagger.v3.oas.annotations.media.Schema
 
 interface NoteRequest {
@@ -38,6 +39,8 @@ data class CreateNoteRequest(
     )
     override val content: String = "",
 ) : NoteRequest {
+
+    @get:JsonIgnore
     override val id: Long
         get() = -1
 }
