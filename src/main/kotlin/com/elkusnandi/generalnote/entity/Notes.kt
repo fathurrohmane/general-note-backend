@@ -12,6 +12,7 @@ data class Notes(
     @Column(name = "title")
     val title: String = "",
     @Column(name = "content")
+    @Lob
     val content: String = "",
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
