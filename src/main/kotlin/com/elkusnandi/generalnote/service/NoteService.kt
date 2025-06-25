@@ -7,9 +7,11 @@ interface NoteService {
 
     fun getNotes(ownerId: Long): List<NotesResponse>
 
-    fun getNote(ownerId: Long, noteId: Long): NotesResponse
+    fun getNote(noteId: Long): NotesResponse
 
-    fun upsertNote(ownerId: Long, note: NoteRequest): NotesResponse
+    fun createNote(ownerId: Long, note: NoteRequest): NotesResponse
+
+    fun updateNote(ownerId: Long, note: NoteRequest): NotesResponse
 
     fun deleteNote(ownerId: Long, noteId: Long)
 

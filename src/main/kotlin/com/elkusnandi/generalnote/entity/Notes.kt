@@ -14,7 +14,7 @@ data class Notes(
     @Column(name = "content")
     @Lob
     val content: String = "",
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     val owner: Users? = null
 )

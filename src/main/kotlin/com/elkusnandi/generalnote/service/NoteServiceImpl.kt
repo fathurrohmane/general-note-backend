@@ -7,6 +7,7 @@ import com.elkusnandi.generalnote.repository.UserRepository
 import com.elkusnandi.generalnote.request.NoteRequest
 import com.elkusnandi.generalnote.response.NotesResponse
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PostAuthorize
 import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.stereotype.Service
 
@@ -15,43 +16,35 @@ class NoteServiceImpl(
     private val noteRepository: NoteRepository,
     private val userRepository: UserRepository
 ) : NoteService {
+
     override fun getNotes(ownerId: Long): List<NotesResponse> {
         return noteRepository.findByOwnerId(ownerId).map {
             NotesResponse(
                 it.id,
                 it.title,
-                it.content
+                it.content,
+                it.owner?.id.toString()
             )
         }
     }
 
-    override fun getNote(ownerId: Long, noteId: Long): NotesResponse {
+    @PostAuthorize("returnObject.ownerId == principal.username")
+    override fun getNote(noteId: Long): NotesResponse {
         val note = noteRepository.findById(noteId).orElseThrow {
             UserFaultException(HttpStatus.NOT_FOUND, "Not found")
-        }
-
-        if (note.owner?.id != ownerId) {
-            throw AuthorizationDeniedException("Cannot access another user note")
         }
 
         return NotesResponse(
             note.id,
             note.title,
-            note.content
+            note.content,
+            note.owner?.id.toString()
         )
     }
 
-    override fun upsertNote(ownerId: Long, note: NoteRequest): NotesResponse {
+    override fun createNote(ownerId: Long, note: NoteRequest): NotesResponse {
         // Need to get user if not it will cause error
         val currentUser = userRepository.findById(ownerId).get()
-
-        if (note.id != -1L) {
-            val currentNote = noteRepository.findById(note.id)
-
-            if (currentNote.get().owner?.id != ownerId) {
-                throw AuthorizationDeniedException("Cannot edit another user note")
-            }
-        }
 
         return noteRepository.save(
             Notes(
@@ -64,7 +57,36 @@ class NoteServiceImpl(
             NotesResponse(
                 it.id,
                 it.title,
-                it.content
+                it.content,
+                currentUser.id.toString()
+            )
+        }
+    }
+
+    override fun updateNote(ownerId: Long, note: NoteRequest): NotesResponse {
+        // Check note ownership
+        val currentNote = noteRepository.findById(note.id)
+
+        if (currentNote.get().owner?.id != ownerId) {
+            throw AuthorizationDeniedException("Cannot edit another user note")
+        }
+
+        // Need to get user if not it will cause error
+        val currentUser = userRepository.findById(ownerId).get()
+
+        return noteRepository.save(
+            Notes(
+                id = note.id,
+                title = note.title,
+                content = note.content,
+                owner = currentUser
+            )
+        ).let {
+            NotesResponse(
+                it.id,
+                it.title,
+                it.content,
+                currentUser.id.toString()
             )
         }
     }

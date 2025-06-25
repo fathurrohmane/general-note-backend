@@ -49,7 +49,7 @@ class NoteController(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable(name = "noteId") noteId: Long
     ): BaseResponse<NotesResponse> {
-        return BaseResponse(data = noteService.getNote(userDetails.username.toLong(), noteId), status = HttpStatus.OK)
+        return BaseResponse(data = noteService.getNote(noteId), status = HttpStatus.OK)
     }
 
     @Operation(
@@ -68,7 +68,7 @@ class NoteController(
         @RequestBody note: CreateNoteRequest
     ): BaseResponse<NotesResponse> {
         return BaseResponse(
-            data = noteService.upsertNote(ownerId = userDetails.username.toLong(), note), status = HttpStatus.OK
+            data = noteService.createNote(ownerId = userDetails.username.toLong(), note), status = HttpStatus.OK
         )
     }
 
@@ -89,7 +89,7 @@ class NoteController(
         @RequestBody note: UpdateNoteRequest
     ): BaseResponse<NotesResponse> {
         return BaseResponse(
-            data = noteService.upsertNote(ownerId = userDetails.username.toLong(), note.copy(id = noteId)), status = HttpStatus.OK
+            data = noteService.updateNote(ownerId = userDetails.username.toLong(), note.copy(id = noteId)), status = HttpStatus.OK
         )
     }
 

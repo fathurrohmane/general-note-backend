@@ -28,7 +28,6 @@ class UserController(
             ApiResponse(responseCode = "403", description = "Access denied")
         ]
     )
-    @PreAuthorize("hasRole('admin')")
     @GetMapping
     fun getAllUsers(): BaseResponse<List<UserResponse>> {
         return BaseResponse(data = userService.getAllUsers(), HttpStatus.OK)

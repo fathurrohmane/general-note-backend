@@ -11,6 +11,7 @@ import com.elkusnandi.generalnote.response.RoleResponse
 import com.elkusnandi.generalnote.response.UserResponse
 import com.elkusnandi.generalnote.util.JwtUtil
 import org.apache.coyote.BadRequestException
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -67,6 +68,7 @@ class UserServiceImpl(
         }
     }
 
+    @PreAuthorize("hasRole('admin')")
     override fun getAllUsers(): List<UserResponse> {
         return userRepository.findAll().map {
             UserResponse(it.id, it.userName, it.password, it.roles.map { role -> RoleResponse(role.id, role.name) })
