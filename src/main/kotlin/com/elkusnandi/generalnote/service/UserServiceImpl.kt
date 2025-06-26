@@ -14,14 +14,14 @@ import org.apache.coyote.BadRequestException
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
-    private val bcrypt: BCryptPasswordEncoder
+    private val passwordEncoder: PasswordEncoder
 ) : UserService {
 
     override fun register(registerRequest: RegisterRequest): RegisterResponse {
@@ -42,7 +42,7 @@ class UserServiceImpl(
         val newUser = userRepository.save(
             Users(
                 userName = registerRequest.userName.trim().lowercase(),
-                password = bcrypt.encode(registerRequest.password),
+                password = passwordEncoder.encode(registerRequest.password),
             ).apply {
                 this.roles = roles
             }
@@ -60,7 +60,7 @@ class UserServiceImpl(
             ?: throw BadRequestException("Username or password not match")
 
         // Check user password
-        if (bcrypt.matches(loginRequest.password, currentUser.password)) {
+        if (passwordEncoder.matches(loginRequest.password, currentUser.password)) {
             val token = JwtUtil.generateToken(currentUser.id.toString())
             return LoginResponse(token = token)
         } else {

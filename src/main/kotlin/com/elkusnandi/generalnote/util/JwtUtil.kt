@@ -3,9 +3,6 @@ package com.elkusnandi.generalnote.util
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import io.jsonwebtoken.security.SignatureException
-import org.springframework.context.annotation.Bean
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.stereotype.Component
 import java.util.*
 
 object JwtUtil {
@@ -46,11 +43,4 @@ object JwtUtil {
         return false
     }
 
-}
-
-@Component
-class Encryption {
-
-    @Bean
-    fun byCrypt() = BCryptPasswordEncoder()
 }
