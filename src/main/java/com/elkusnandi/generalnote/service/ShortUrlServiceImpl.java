@@ -8,8 +8,10 @@ import com.elkusnandi.generalnote.repository.ShortUrlRepository;
 import com.elkusnandi.generalnote.repository.UserRepository;
 import com.elkusnandi.generalnote.request.ShortUrlRequest;
 import com.elkusnandi.generalnote.response.ShortUrlResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -29,6 +31,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     }
 
     @Override
+    @Transactional
     public String redirectToLongUrl(String shortId) {
         ShortUrl shortUrl = shortUrlRepository.findByShortId(shortId);
 
@@ -36,7 +39,24 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             throw new UserFaultException(HttpStatus.NOT_FOUND, "Short id Not found or expired");
         }
 
+        shortUrl.setCounter(shortUrl.getCounter() + 1);
+        shortUrlRepository.save(shortUrl);
+
         return shortUrl.getLongUrl();
+    }
+
+    @Override
+    @PostAuthorize("returnObject.ownerId == principal.username")
+    public ShortUrlResponse getShortIdDetail(String shortId) {
+        ShortUrl shortUrl = shortUrlRepository.findByShortId(shortId);
+
+        if (shortUrl == null) {
+            throw new UserFaultException(HttpStatus.NOT_FOUND, "Short id Not found or expired");
+        }
+
+        return new ShortUrlResponse(
+                shortUrl.getId(), shortUrl.getLongUrl(), shortUrl.getShortId(), shortUrl.getCounter(), shortUrl.getDateCreated(), shortUrl.getExpirationDate(), Long.toString(shortUrl.getCreatedBy().getId())
+        );
     }
 
     @Override
@@ -57,7 +77,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         } else {
             ShortUrl exisingShortUrl = shortUrlRepository.findByShortId(shortUrlRequest.shortId);
 
-            if (exisingShortUrl != null && Instant.now().isBefore(exisingShortUrl.getExpirationDate())) {
+            if (exisingShortUrl != null && exisingShortUrl.getExpirationDate() != null && Instant.now().isBefore(exisingShortUrl.getExpirationDate())) {
                 throw new UserFaultException(HttpStatus.BAD_REQUEST, "Duplicate short id. Please use another short id.");
             }
 
@@ -77,7 +97,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         );
 
         return new ShortUrlResponse(
-                newShortUrl.getId(), newShortUrl.getLongUrl(), newShortUrl.getShortId(), newShortUrl.getCounter(), newShortUrl.getDateCreated(), newShortUrl.getExpirationDate()
+                newShortUrl.getId(), newShortUrl.getLongUrl(), newShortUrl.getShortId(), newShortUrl.getCounter(), newShortUrl.getDateCreated(), newShortUrl.getExpirationDate(), Long.toString(newShortUrl.getCreatedBy().getId())
         );
     }
 
