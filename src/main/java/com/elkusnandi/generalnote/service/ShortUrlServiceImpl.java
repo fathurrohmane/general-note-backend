@@ -32,8 +32,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     public String redirectToLongUrl(String shortId) {
         ShortUrl shortUrl = shortUrlRepository.findByShortId(shortId);
 
-        if (shortUrl == null) {
-            throw new UserFaultException(HttpStatus.NOT_FOUND, "Not found");
+        if (shortUrl == null || shortUrl.getExpirationDate() != null && Instant.now().isAfter(shortUrl.getExpirationDate())) {
+            throw new UserFaultException(HttpStatus.NOT_FOUND, "Short id Not found or expired");
         }
 
         return shortUrl.getLongUrl();
