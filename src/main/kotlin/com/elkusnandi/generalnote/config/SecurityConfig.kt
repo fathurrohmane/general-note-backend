@@ -41,7 +41,8 @@ class SecurityConfig(
                         "/public/api/**",
                         "/swagger-ui/**",
                         "/v3/**",
-                        "/error"
+                        "/error",
+                        "/s/**"
                     ) // need authentication selected end point
                     .permitAll()
                     .anyRequest()
