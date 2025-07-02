@@ -26,7 +26,7 @@ class UserServiceImpl(
 
     override fun register(registerRequest: RegisterRequest): RegisterResponse {
         // check for duplicate username
-        if (userRepository.existsByUserName(registerRequest.userName.lowercase())) {
+        if (userRepository.existsByUserName(registerRequest.userName.trim().lowercase())) {
             throw BadRequestException("username already registered")
         }
 
