@@ -60,7 +60,7 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:5173")
+        configuration.allowedOrigins = listOf("http://localhost:5173", "https://www.malubertanya.com")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true
@@ -75,5 +75,5 @@ class SecurityConfig(
 class Encryption {
 
     @Bean
-    fun byCrypt() : PasswordEncoder = BCryptPasswordEncoder()
+    fun byCrypt(): PasswordEncoder = BCryptPasswordEncoder()
 }
