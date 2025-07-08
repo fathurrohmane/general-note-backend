@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.servlet.NoHandlerFoundException
 import java.util.function.Consumer
 
@@ -84,6 +85,17 @@ class GlobalExceptionHandler {
             status = HttpStatus.BAD_REQUEST,
             success = false,
             exception.message.toString()
+        )
+    }
+
+    @ExceptionHandler(WebClientResponseException::class)
+    @ResponseBody
+    fun resolveException(exception: WebClientResponseException): ResponseEntity<*> {
+        return BaseResponse(
+            data = null,
+            status = exception.statusCode,
+            success = false,
+            exception.message
         )
     }
 }
