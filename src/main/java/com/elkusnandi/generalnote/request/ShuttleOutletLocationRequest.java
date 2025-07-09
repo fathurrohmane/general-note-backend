@@ -10,10 +10,10 @@ public class ShuttleOutletLocationRequest {
     private String name;
 
     @NotBlank
-    private Long latitude;
+    private Double latitude;
 
     @NotBlank
-    private Long longitude;
+    private Double longitude;
 
     @NotBlank
     private String provinceId;

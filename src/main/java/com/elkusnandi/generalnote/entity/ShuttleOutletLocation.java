@@ -22,10 +22,10 @@ public class ShuttleOutletLocation {
     private String name;
 
     @Column(name = "latitude")
-    private Long latitude;
+    private Double latitude;
 
     @Column(name = "longitude")
-    private Long longitude;
+    private Double longitude;
 
     @Embedded
     @Column(name = "address")

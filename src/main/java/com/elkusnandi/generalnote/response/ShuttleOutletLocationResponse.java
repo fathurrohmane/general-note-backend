@@ -12,9 +12,9 @@ public class ShuttleOutletLocationResponse {
 
     private String name;
 
-    private Long latitude;
+    private Double latitude;
 
-    private Long longitude;
+    private Double longitude;
 
     private ShuttleOutletLocationResponse.Address address;
 
