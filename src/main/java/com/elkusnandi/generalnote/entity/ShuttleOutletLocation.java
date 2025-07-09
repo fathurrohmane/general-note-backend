@@ -32,22 +32,22 @@ public class ShuttleOutletLocation {
 @Embeddable
 class Address {
     @Column(name = "provinceId")
-    private Long provinceId;
+    private String provinceId;
     @Column(name = "province")
     private String province;
 
     @Column(name = "regencyId")
-    private Long regencyId;
+    private String regencyId;
     @Column(name = "regency")
     private String regency;
 
     @Column(name = "districtId")
-    private Long districtId;
+    private String districtId;
     @Column(name = "district")
     private String district;
 
     @Column(name = "villageId")
-    private Long villageId;
+    private String villageId;
     @Column(name = "village")
     private String village;
 
