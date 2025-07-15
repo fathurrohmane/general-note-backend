@@ -1,11 +1,13 @@
 package com.elkusnandi.generalnote.response;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
 public class ShuttleOutletLocationResponse {
 
     private UUID id;
@@ -19,6 +21,7 @@ public class ShuttleOutletLocationResponse {
     private ShuttleOutletLocationResponse.Address address;
 
     @Data
+    @AllArgsConstructor
     public static class Address {
         private String provinceId;
         private String province;

@@ -9,7 +9,8 @@ import java.util.UUID;
 @Entity
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"travel_id", "order"})
+                @UniqueConstraint(columnNames = {"travel_id", "order"}),
+                @UniqueConstraint(columnNames = {"travel_id", "location_id"})
         }
 )
 @Data
@@ -28,7 +29,7 @@ public class TravelRoute {
     private ShuttleOutletLocation location;
 
     @Column(name = "order")
-    private int order;
+    private Integer order;
 
     @Column(name = "is_pickup_location")
     private Boolean isPickupLocation;

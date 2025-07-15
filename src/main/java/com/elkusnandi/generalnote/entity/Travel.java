@@ -1,13 +1,11 @@
 package com.elkusnandi.generalnote.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -27,4 +25,12 @@ public class Travel {
     @Column(name = "visible")
     private Boolean visible;
 
+    @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TravelRoute> routes;
+
+    public Travel(UUID id, String name, Boolean visible) {
+        this.id = id;
+        this.name = name;
+        this.visible = visible;
+    }
 }
