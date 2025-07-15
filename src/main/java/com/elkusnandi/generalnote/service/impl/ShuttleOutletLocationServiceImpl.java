@@ -40,8 +40,11 @@ public class ShuttleOutletLocationServiceImpl implements ShuttleOutletLocationSe
     }
 
     @Override
-    public Optional<ShuttleOutletLocation> getShuttleOutletLocationDetail(UUID outletId) {
-        return outletRepository.findById(outletId);
+    public ShuttleOutletLocation getShuttleOutletLocationDetail(UUID outletId) {
+        return outletRepository.findById(outletId).orElseThrow(() -> new UserFaultException(
+                HttpStatus.BAD_REQUEST,
+                "Shuttle Outlet Location not found"
+        ));
     }
 
     @Override

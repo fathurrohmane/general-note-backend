@@ -8,11 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/shuttle/outlet")
+@RequestMapping("/shuttle/admin/outlet")
 public class ShuttleOutletLocationController {
 
     private final ShuttleOutletLocationService service;
@@ -27,7 +26,7 @@ public class ShuttleOutletLocationController {
     }
 
     @GetMapping("/{outletId}")
-    public BaseResponse<Optional<ShuttleOutletLocation>> getOutletDetail(@PathVariable String outletId) {
+    public BaseResponse<ShuttleOutletLocation> getOutletDetail(@PathVariable String outletId) {
         return new BaseResponse<>(
                 service.getShuttleOutletLocationDetail(UUID.fromString(outletId)),
                 HttpStatus.OK,
