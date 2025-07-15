@@ -14,6 +14,7 @@ import com.elkusnandi.generalnote.response.ShuttleOutletLocationResponse;
 import com.elkusnandi.generalnote.response.TravelResponse;
 import com.elkusnandi.generalnote.response.TravelRouteResponse;
 import com.elkusnandi.generalnote.service.TravelService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -160,37 +161,30 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
+    @Transactional
     public List<TravelRouteResponse> editTravelRoute(UUID travelId, List<TravelRouteEditRequest> travelRoutes) {
+        Map<UUID, ShuttleOutletLocation> locations = shuttleOutletLocationRepository.findAllById(travelRoutes.stream()
+                .map(TravelRouteEditRequest::getShuttleLocationId).toList()).stream().collect(
+                Collectors.toMap(ShuttleOutletLocation::getId, Function.identity()));
+        travelRouteRepository.deleteByTravelIdOrderByOrder(travelId);
+
         Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new UserFaultException(
                 HttpStatus.BAD_REQUEST,
                 "Travel not found"
         ));
 
-        Map<UUID, ShuttleOutletLocation> locations = shuttleOutletLocationRepository.findAllById(travelRoutes.stream()
-                .map(TravelRouteEditRequest::getShuttleLocationId).toList()).stream().collect(
-                Collectors.toMap(ShuttleOutletLocation::getId, Function.identity()));
-        List<TravelRoute> currentTravelRoutes = travelRouteRepository.findByTravelIdOrderByOrder(travelId);
-
         ArrayList<TravelRoute> travelRouteArrayList = new ArrayList<>();
         for (int i = 0; i < travelRoutes.size(); i++) {
-            TravelRoute travelRoute = currentTravelRoutes.get(i);
+            TravelRoute travelRoute = new TravelRoute();
+            travelRoute.setId(UUID.randomUUID());
             travelRoute.setOrder(i);
+            travelRoute.setTravel(travel);
             travelRoute.setLocation(locations.get(travelRoutes.get(i).getShuttleLocationId()));
             travelRoute.setIsPickupLocation(travelRoutes.get(i).getIsPickupLocation());
             travelRoute.setIsDropLocation(travelRoutes.get(i).getIsDropLocation());
             travelRouteArrayList.add(travelRoute);
         }
         List<TravelRoute> newTravelList = travelRouteRepository.saveAll(travelRouteArrayList);
-
-        // TODO add functionality to remove routes
-//        travelRouteArrayList.clear();
-//        for (int i = currentTravelRoutes.size() - 1; i < travelRoutes.size(); i++) {
-//            TravelRoute travelRoute = new TravelRoute();
-//            travelRouteArrayList.add(travelRoute);
-//        }
-//        if (!travelRouteArrayList.isEmpty()) {
-//            travelRouteRepository.deleteAllById(travelRouteArrayList.stream().map(TravelRoute::getId).toList());
-//        }
 
         return newTravelList.stream().map(travelRoute -> {
             ShuttleOutletLocation location = travelRoute.getLocation();
