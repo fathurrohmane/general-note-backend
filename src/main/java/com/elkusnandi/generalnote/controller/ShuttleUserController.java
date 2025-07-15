@@ -21,7 +21,7 @@ public class ShuttleUserController {
         this.shuttleOutletLocationService = shuttleOutletLocationService;
     }
 
-    @RequestMapping("/shuttle/location/")
+    @RequestMapping("/location/")
     public BaseResponse<List<ShuttleOutletLocation>> getDepartureLocations() {
         return new BaseResponse<>(
                 shuttleOutletLocationService.getAvailableOutletLocation(null),
@@ -31,7 +31,7 @@ public class ShuttleUserController {
         );
     }
 
-    @RequestMapping("/shuttle/location/{shuttleOutletLocationId}/arrival")
+    @RequestMapping("/location/{shuttleOutletLocationId}/arrival")
     public BaseResponse<List<ShuttleOutletLocation>> getArrivalLocations(@PathVariable("shuttleOutletLocationId") UUID shuttleOutletLocationId) {
         return new BaseResponse<>(
                 shuttleOutletLocationService.getAvailableOutletLocation(shuttleOutletLocationId),
