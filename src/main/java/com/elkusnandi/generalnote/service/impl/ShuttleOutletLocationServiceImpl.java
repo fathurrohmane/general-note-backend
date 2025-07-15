@@ -40,6 +40,15 @@ public class ShuttleOutletLocationServiceImpl implements ShuttleOutletLocationSe
     }
 
     @Override
+    public List<ShuttleOutletLocation> getAvailableOutletLocation(UUID departureLocationId) {
+        if (departureLocationId == null) {
+            return outletRepository.findDepartureLocations();
+        } else {
+            return outletRepository.findArrivalLocation(departureLocationId);
+        }
+    }
+
+    @Override
     public ShuttleOutletLocation getShuttleOutletLocationDetail(UUID outletId) {
         return outletRepository.findById(outletId).orElseThrow(() -> new UserFaultException(
                 HttpStatus.BAD_REQUEST,
@@ -88,7 +97,8 @@ public class ShuttleOutletLocationServiceImpl implements ShuttleOutletLocationSe
                                 district.get().getShortId(),
                                 null
                         ).stream()
-                        .filter(villageResponse -> villageResponse.getShortId().equals(outlet.getVillageId())).findFirst();
+                        .filter(villageResponse -> villageResponse.getShortId().equals(outlet.getVillageId()))
+                        .findFirst();
 
         if (village.isEmpty()) {
             throw new UserFaultException(HttpStatus.BAD_REQUEST, "Village not found");

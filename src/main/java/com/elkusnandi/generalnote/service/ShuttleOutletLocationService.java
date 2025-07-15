@@ -10,6 +10,8 @@ public interface ShuttleOutletLocationService {
 
     List<ShuttleOutletLocation> getShuttleOutletLocations();
 
+    List<ShuttleOutletLocation> getAvailableOutletLocation(UUID departureLocationId);
+
     ShuttleOutletLocation getShuttleOutletLocationDetail(UUID outletId);
 
     ShuttleOutletLocation createShuttleOutletLocation(ShuttleOutletLocationRequest outlet);
