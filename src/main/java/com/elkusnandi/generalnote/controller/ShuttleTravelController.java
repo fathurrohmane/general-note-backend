@@ -2,6 +2,7 @@ package com.elkusnandi.generalnote.controller;
 
 import com.elkusnandi.generalnote.common.base.BaseResponse;
 import com.elkusnandi.generalnote.request.TravelRequest;
+import com.elkusnandi.generalnote.request.TravelRouteEditRequest;
 import com.elkusnandi.generalnote.request.TravelRouteRequest;
 import com.elkusnandi.generalnote.response.TravelResponse;
 import com.elkusnandi.generalnote.response.TravelRouteResponse;
@@ -28,17 +29,30 @@ public class ShuttleTravelController {
     }
 
     @PostMapping()
-    public BaseResponse<TravelResponse> createTravel(TravelRequest request) {
+    public BaseResponse<TravelResponse> createTravel(@RequestBody TravelRequest request) {
         return new BaseResponse<>(service.createNewTravel(request), HttpStatus.OK, true, "");
     }
 
     @PostMapping("/{travelId}")
     public BaseResponse<List<TravelRouteResponse>> createTravelRoute(
             @PathVariable String travelId,
-            List<TravelRouteRequest> request
+            @RequestBody List<TravelRouteRequest> request
     ) {
         return new BaseResponse<>(
                 service.createTravelRoute(UUID.fromString(travelId), request),
+                HttpStatus.OK,
+                true,
+                ""
+        );
+    }
+
+    @PutMapping("/{travelId}")
+    public BaseResponse<List<TravelRouteResponse>> editTravelRoute(
+            @PathVariable String travelId,
+            @RequestBody List<TravelRouteEditRequest> request
+    ) {
+        return new BaseResponse<>(
+                service.editTravelRoute(UUID.fromString(travelId), request),
                 HttpStatus.OK,
                 true,
                 ""

@@ -9,8 +9,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TravelRouteRequest {
 
-    private UUID travelId;
-
     private UUID shuttleLocationId;
 
     private int order;

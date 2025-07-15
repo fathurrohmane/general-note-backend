@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TravelRouteEditRequest {
 
-    private UUID travelId;
+    private UUID travelRouteId;
 
     private UUID shuttleLocationId;
 
