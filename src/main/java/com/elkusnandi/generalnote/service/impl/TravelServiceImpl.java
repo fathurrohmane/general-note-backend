@@ -17,6 +17,7 @@ import com.elkusnandi.generalnote.service.TravelService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -83,6 +84,7 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public TravelResponse createNewTravel(TravelRequest travelRequest) {
         Travel travel = travelRepository.save(new Travel(UUID.randomUUID(), travelRequest.getName(), false));
         return new TravelResponse(
@@ -94,6 +96,7 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public void toggleTravelVisibility(UUID travelId, Boolean visible) {
         Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new UserFaultException(
                 HttpStatus.BAD_REQUEST,
@@ -106,6 +109,7 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public List<TravelRouteResponse> createTravelRoute(UUID travelId, List<TravelRouteRequest> travelRoutes) {
         Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new UserFaultException(
                 HttpStatus.BAD_REQUEST,
@@ -162,6 +166,7 @@ public class TravelServiceImpl implements TravelService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('admin')")
     public List<TravelRouteResponse> editTravelRoute(UUID travelId, List<TravelRouteEditRequest> travelRoutes) {
         Map<UUID, ShuttleOutletLocation> locations = shuttleOutletLocationRepository.findAllById(travelRoutes.stream()
                 .map(TravelRouteEditRequest::getShuttleLocationId).toList()).stream().collect(

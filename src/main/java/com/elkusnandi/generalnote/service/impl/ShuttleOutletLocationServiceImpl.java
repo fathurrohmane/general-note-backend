@@ -12,6 +12,7 @@ import com.elkusnandi.generalnote.response.VillageResponse;
 import com.elkusnandi.generalnote.service.IndonesiaAreaService;
 import com.elkusnandi.generalnote.service.ShuttleOutletLocationService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,11 +58,13 @@ public class ShuttleOutletLocationServiceImpl implements ShuttleOutletLocationSe
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public ShuttleOutletLocation createShuttleOutletLocation(ShuttleOutletLocationRequest outlet) {
         return outletRepository.save(createShuttleOutletLocation(null, outlet));
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public ShuttleOutletLocation editShuttleOutletLocation(UUID outletId, ShuttleOutletLocationRequest outlet) {
         return outletRepository.save(createShuttleOutletLocation(outletId, outlet));
     }
@@ -125,6 +128,7 @@ public class ShuttleOutletLocationServiceImpl implements ShuttleOutletLocationSe
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public void deleteShuttleOutletLocation(UUID outletId) {
         outletRepository.deleteById(outletId);
     }
