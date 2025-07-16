@@ -37,4 +37,7 @@ public class TravelRoute {
 
     @Column(name = "is_drop_location")
     private Boolean isDropLocation;
+
+    @Column(name = "eta_to_next_route")
+    private Integer etaToNextRoute;
 }

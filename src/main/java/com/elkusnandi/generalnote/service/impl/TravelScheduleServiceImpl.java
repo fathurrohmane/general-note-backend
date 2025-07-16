@@ -1,0 +1,82 @@
+package com.elkusnandi.generalnote.service.impl;
+
+import com.elkusnandi.generalnote.entity.Travel;
+import com.elkusnandi.generalnote.entity.TravelSchedule;
+import com.elkusnandi.generalnote.exception.UserFaultException;
+import com.elkusnandi.generalnote.mapper.TravelScheduleMapper;
+import com.elkusnandi.generalnote.repository.TravelRepository;
+import com.elkusnandi.generalnote.repository.TravelScheduleRepository;
+import com.elkusnandi.generalnote.request.TravelScheduleRequest;
+import com.elkusnandi.generalnote.response.TravelScheduleResponse;
+import com.elkusnandi.generalnote.service.TravelScheduleService;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class TravelScheduleServiceImpl implements TravelScheduleService {
+
+    private final TravelScheduleRepository scheduleRepository;
+
+    private final TravelRepository travelRepository;
+
+    public TravelScheduleServiceImpl(TravelScheduleRepository scheduleRepository, TravelRepository travelRepository) {
+        this.scheduleRepository = scheduleRepository;
+        this.travelRepository = travelRepository;
+    }
+
+    @Override
+    public List<TravelScheduleResponse> getTravelSchedule(UUID travelId, LocalDate date) {
+        Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new UserFaultException(
+                HttpStatus.BAD_REQUEST,
+                "Travel not found"
+        ));
+        if (date == null) {
+            return scheduleRepository.findByTravel(travel).stream().map(TravelScheduleMapper.INSTANCE::entityToResponse)
+                    .toList();
+        } else {
+            return scheduleRepository.findByDateAndTravel(date, travel).stream()
+                    .map(TravelScheduleMapper.INSTANCE::entityToResponse).toList();
+        }
+    }
+
+    @Override
+    public TravelScheduleResponse createSchedule(UUID travelId, TravelScheduleRequest schedule) {
+        Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new UserFaultException(
+                HttpStatus.BAD_REQUEST,
+                "Travel not found"
+        ));
+
+        TravelSchedule travelSchedule = scheduleRepository.save(new TravelSchedule(
+                UUID.randomUUID(),
+                schedule.getDate(),
+                schedule.getTime(),
+                travel
+        ));
+        return TravelScheduleMapper.INSTANCE.entityToResponse(travelSchedule);
+    }
+
+    @Override
+    public TravelScheduleResponse editSchedule(UUID travelScheduleId, TravelScheduleRequest schedule) {
+        TravelSchedule currentTravelSchedule =
+                scheduleRepository.findById(travelScheduleId).orElseThrow(() -> new UserFaultException(
+                        HttpStatus.BAD_REQUEST, "Travel schedule not found"));
+
+        currentTravelSchedule.setDate(schedule.getDate());
+        currentTravelSchedule.setTime(schedule.getTime());
+
+        TravelSchedule travelSchedule = scheduleRepository.save(currentTravelSchedule);
+        return TravelScheduleMapper.INSTANCE.entityToResponse(travelSchedule);
+    }
+
+    @Override
+    public void deleteSchedule(UUID travelScheduleId) {
+        scheduleRepository.findById(travelScheduleId).orElseThrow(() -> new UserFaultException(
+                HttpStatus.BAD_REQUEST, "Travel schedule not found"));
+
+        scheduleRepository.deleteById(travelScheduleId);
+    }
+}
