@@ -1,4 +1,4 @@
-package com.elkusnandi.generalnote.service;
+package com.elkusnandi.generalnote.service.impl;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.elkusnandi.generalnote.entity.ShortUrl;
@@ -8,6 +8,7 @@ import com.elkusnandi.generalnote.repository.ShortUrlRepository;
 import com.elkusnandi.generalnote.repository.UserRepository;
 import com.elkusnandi.generalnote.request.ShortUrlRequest;
 import com.elkusnandi.generalnote.response.ShortUrlResponse;
+import com.elkusnandi.generalnote.service.ShortUrlService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

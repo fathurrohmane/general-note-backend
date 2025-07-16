@@ -2,6 +2,7 @@ package com.elkusnandi.generalnote.service
 
 import com.elkusnandi.generalnote.entity.Notes
 import com.elkusnandi.generalnote.exception.UserFaultException
+import com.elkusnandi.generalnote.mapper.NoteMapper
 import com.elkusnandi.generalnote.repository.NoteRepository
 import com.elkusnandi.generalnote.repository.UserRepository
 import com.elkusnandi.generalnote.request.NoteRequest
@@ -19,12 +20,7 @@ class NoteServiceImpl(
 
     override fun getNotes(ownerId: Long): List<NotesResponse> {
         return noteRepository.findByOwnerId(ownerId).map {
-            NotesResponse(
-                it.id,
-                it.title,
-                it.content,
-                it.owner?.id.toString()
-            )
+            NoteMapper.INSTANCE.notesToResponse(it)
         }
     }
 
@@ -34,12 +30,7 @@ class NoteServiceImpl(
             UserFaultException(HttpStatus.NOT_FOUND, "Not found")
         }
 
-        return NotesResponse(
-            note.id,
-            note.title,
-            note.content,
-            note.owner?.id.toString()
-        )
+        return NoteMapper.INSTANCE.notesToResponse(note)
     }
 
     override fun createNote(ownerId: Long, note: NoteRequest): NotesResponse {
@@ -54,12 +45,7 @@ class NoteServiceImpl(
                 owner = currentUser
             )
         ).let {
-            NotesResponse(
-                it.id,
-                it.title,
-                it.content,
-                currentUser.id.toString()
-            )
+            NoteMapper.INSTANCE.notesToResponse(it)
         }
     }
 
@@ -82,12 +68,7 @@ class NoteServiceImpl(
                 owner = currentUser
             )
         ).let {
-            NotesResponse(
-                it.id,
-                it.title,
-                it.content,
-                currentUser.id.toString()
-            )
+            NoteMapper.INSTANCE.notesToResponse(it)
         }
     }
 

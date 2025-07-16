@@ -21,4 +21,6 @@ public interface TravelService {
 
     List<TravelRouteResponse> editTravelRoute(UUID travelId, List<TravelRouteEditRequest> travelRoutes);
 
+    void deleteTravel(UUID travelId);
+
 }

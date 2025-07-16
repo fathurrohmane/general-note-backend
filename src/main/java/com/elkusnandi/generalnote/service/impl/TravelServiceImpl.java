@@ -4,13 +4,14 @@ import com.elkusnandi.generalnote.entity.ShuttleOutletLocation;
 import com.elkusnandi.generalnote.entity.Travel;
 import com.elkusnandi.generalnote.entity.TravelRoute;
 import com.elkusnandi.generalnote.exception.UserFaultException;
+import com.elkusnandi.generalnote.mapper.TravelMapper;
+import com.elkusnandi.generalnote.mapper.TravelRouteMapper;
 import com.elkusnandi.generalnote.repository.ShuttleOutletLocationRepository;
 import com.elkusnandi.generalnote.repository.TravelRepository;
 import com.elkusnandi.generalnote.repository.TravelRouteRepository;
 import com.elkusnandi.generalnote.request.TravelRequest;
 import com.elkusnandi.generalnote.request.TravelRouteEditRequest;
 import com.elkusnandi.generalnote.request.TravelRouteRequest;
-import com.elkusnandi.generalnote.response.ShuttleOutletLocationResponse;
 import com.elkusnandi.generalnote.response.TravelResponse;
 import com.elkusnandi.generalnote.response.TravelRouteResponse;
 import com.elkusnandi.generalnote.service.TravelService;
@@ -46,41 +47,7 @@ public class TravelServiceImpl implements TravelService {
 
     @Override
     public List<TravelResponse> getTravel() {
-        return travelRepository.findAll().stream().map(
-                travel -> new TravelResponse(
-                        travel.getId(),
-                        travel.getName(),
-                        travel.getVisible(),
-                        travel.getRoutes().stream().map(travelRoute -> {
-                                    ShuttleOutletLocation location = travelRoute.getLocation();
-                                    ShuttleOutletLocation.Address address = travelRoute.getLocation().getAddress();
-                                    return new TravelRouteResponse(
-                                            travelRoute.getId(),
-                                            new ShuttleOutletLocationResponse(
-                                                    location.getId(),
-                                                    location.getName(),
-                                                    location.getLatitude(),
-                                                    location.getLongitude(),
-                                                    new ShuttleOutletLocationResponse.Address(
-                                                            address.getProvinceId(),
-                                                            address.getProvince(),
-                                                            address.getRegencyId(),
-                                                            address.getRegency(),
-                                                            address.getDistrictId(),
-                                                            address.getDistrict(),
-                                                            address.getVillageId(),
-                                                            address.getVillage(),
-                                                            address.getStreet()
-                                                    )
-                                            ),
-                                            travelRoute.getOrder(),
-                                            travelRoute.getIsPickupLocation(),
-                                            travelRoute.getIsDropLocation()
-                                    );
-                                }
-                        ).toList()
-                )
-        ).toList();
+        return travelRepository.findAll().stream().map(TravelMapper.INSTANCE::entityToResponse).toList();
     }
 
     @Override
@@ -126,7 +93,13 @@ public class TravelServiceImpl implements TravelService {
             travelRoute.setId(UUID.randomUUID());
             travelRoute.setTravel(travel);
             travelRoute.setOrder(i);
-            travelRoute.setLocation(locations.get(travelRoutes.get(i).getShuttleLocationId()));
+
+            ShuttleOutletLocation currentLocation = locations.get(travelRoutes.get(i).getShuttleLocationId());
+            if (currentLocation == null) {
+                throw new UserFaultException(HttpStatus.BAD_REQUEST, "Location not found");
+            }
+
+            travelRoute.setLocation(currentLocation);
             travelRoute.setIsPickupLocation(travelRoutes.get(i).getIsPickupLocation());
             travelRoute.setIsDropLocation(travelRoutes.get(i).getIsDropLocation());
             travelRouteArrayList.add(travelRoute);
@@ -134,34 +107,7 @@ public class TravelServiceImpl implements TravelService {
 
         List<TravelRoute> newTravelList = travelRouteRepository.saveAll(travelRouteArrayList);
 
-        return newTravelList.stream().map(travelRoute -> {
-            ShuttleOutletLocation location = travelRoute.getLocation();
-            ShuttleOutletLocation.Address address = travelRoute.getLocation().getAddress();
-
-            return new TravelRouteResponse(
-                    travelRoute.getId(),
-                    new ShuttleOutletLocationResponse(
-                            location.getId(),
-                            location.getName(),
-                            location.getLatitude(),
-                            location.getLongitude(),
-                            new ShuttleOutletLocationResponse.Address(
-                                    address.getProvinceId(),
-                                    address.getProvince(),
-                                    address.getRegencyId(),
-                                    address.getRegency(),
-                                    address.getDistrictId(),
-                                    address.getDistrict(),
-                                    address.getVillageId(),
-                                    address.getVillage(),
-                                    address.getStreet()
-                            )
-                    ),
-                    travelRoute.getOrder(),
-                    travelRoute.getIsPickupLocation(),
-                    travelRoute.getIsDropLocation()
-            );
-        }).toList();
+        return newTravelList.stream().map(TravelRouteMapper.INSTANCE::entityToResponse).toList();
     }
 
     @Override
@@ -184,40 +130,25 @@ public class TravelServiceImpl implements TravelService {
             travelRoute.setId(UUID.randomUUID());
             travelRoute.setOrder(i);
             travelRoute.setTravel(travel);
-            travelRoute.setLocation(locations.get(travelRoutes.get(i).getShuttleLocationId()));
+
+            ShuttleOutletLocation currentLocation = locations.get(travelRoutes.get(i).getShuttleLocationId());
+            if (currentLocation == null) {
+                throw new UserFaultException(HttpStatus.BAD_REQUEST, "Location not found");
+            }
+
+            travelRoute.setLocation(currentLocation);
             travelRoute.setIsPickupLocation(travelRoutes.get(i).getIsPickupLocation());
             travelRoute.setIsDropLocation(travelRoutes.get(i).getIsDropLocation());
             travelRouteArrayList.add(travelRoute);
         }
         List<TravelRoute> newTravelList = travelRouteRepository.saveAll(travelRouteArrayList);
 
-        return newTravelList.stream().map(travelRoute -> {
-            ShuttleOutletLocation location = travelRoute.getLocation();
-            ShuttleOutletLocation.Address address = travelRoute.getLocation().getAddress();
+        return newTravelList.stream().map(TravelRouteMapper.INSTANCE::entityToResponse).toList();
+    }
 
-            return new TravelRouteResponse(
-                    travelRoute.getId(),
-                    new ShuttleOutletLocationResponse(
-                            location.getId(),
-                            location.getName(),
-                            location.getLatitude(),
-                            location.getLongitude(),
-                            new ShuttleOutletLocationResponse.Address(
-                                    address.getProvinceId(),
-                                    address.getProvince(),
-                                    address.getRegencyId(),
-                                    address.getRegency(),
-                                    address.getDistrictId(),
-                                    address.getDistrict(),
-                                    address.getVillageId(),
-                                    address.getVillage(),
-                                    address.getStreet()
-                            )
-                    ),
-                    travelRoute.getOrder(),
-                    travelRoute.getIsPickupLocation(),
-                    travelRoute.getIsDropLocation()
-            );
-        }).toList();
+    @Override
+    @PreAuthorize("hasRole('admin')")
+    public void deleteTravel(UUID travelId) {
+        travelRepository.deleteById(travelId);
     }
 }

@@ -59,4 +59,18 @@ public class ShuttleTravelController {
         );
     }
 
+    @DeleteMapping("/{travelId}")
+    public BaseResponse<List<TravelRouteResponse>> deleteTravel(
+            @PathVariable String travelId
+    ) {
+        service.deleteTravel(UUID.fromString(travelId));
+
+        return new BaseResponse<>(
+                null,
+                HttpStatus.OK,
+                true,
+                ""
+        );
+    }
+
 }
