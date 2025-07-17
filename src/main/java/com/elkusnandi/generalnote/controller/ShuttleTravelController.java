@@ -108,12 +108,16 @@ public class ShuttleTravelController {
 
     @PutMapping("/{travelId}/schedule/{travelScheduleId}")
     public BaseResponse<TravelScheduleResponse> editTravelSchedule(
-            @PathVariable String travelId, // TODO Remove this?
+            @PathVariable String travelId,
             @PathVariable String travelScheduleId,
             @RequestBody TravelScheduleRequest travelScheduleRequest
     ) {
         return new BaseResponse<>(
-                travelScheduleService.editSchedule(UUID.fromString(travelScheduleId), travelScheduleRequest),
+                travelScheduleService.editSchedule(
+                        UUID.fromString(travelId),
+                        UUID.fromString(travelScheduleId),
+                        travelScheduleRequest
+                ),
                 HttpStatus.OK,
                 true,
                 ""
@@ -122,10 +126,10 @@ public class ShuttleTravelController {
 
     @DeleteMapping("/{travelId}/schedule/{travelScheduleId}")
     public BaseResponse<?> deleteTravelSchedule(
-            @PathVariable String travelId, // TODO Remove this?
+            @PathVariable String travelId,
             @PathVariable String travelScheduleId
     ) {
-        travelScheduleService.deleteSchedule(UUID.fromString(travelScheduleId));
+        travelScheduleService.deleteSchedule(UUID.fromString(travelId), UUID.fromString(travelScheduleId));
 
         return new BaseResponse<>(null, HttpStatus.OK, true, "");
     }

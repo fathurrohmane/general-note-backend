@@ -9,6 +9,7 @@ import com.elkusnandi.generalnote.repository.TravelScheduleRepository;
 import com.elkusnandi.generalnote.request.TravelScheduleRequest;
 import com.elkusnandi.generalnote.response.TravelScheduleResponse;
 import com.elkusnandi.generalnote.service.TravelScheduleService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -60,10 +61,11 @@ public class TravelScheduleServiceImpl implements TravelScheduleService {
     }
 
     @Override
-    public TravelScheduleResponse editSchedule(UUID travelScheduleId, TravelScheduleRequest schedule) {
+    public TravelScheduleResponse editSchedule(UUID travelId, UUID travelScheduleId, TravelScheduleRequest schedule) {
         TravelSchedule currentTravelSchedule =
-                scheduleRepository.findById(travelScheduleId).orElseThrow(() -> new UserFaultException(
-                        HttpStatus.BAD_REQUEST, "Travel schedule not found"));
+                scheduleRepository.findByIdAndTravelId(travelScheduleId, travelId)
+                        .orElseThrow(() -> new UserFaultException(
+                                HttpStatus.BAD_REQUEST, "Travel schedule not found"));
 
         currentTravelSchedule.setDate(schedule.getDate());
         currentTravelSchedule.setTime(schedule.getTime());
@@ -73,10 +75,11 @@ public class TravelScheduleServiceImpl implements TravelScheduleService {
     }
 
     @Override
-    public void deleteSchedule(UUID travelScheduleId) {
-        scheduleRepository.findById(travelScheduleId).orElseThrow(() -> new UserFaultException(
-                HttpStatus.BAD_REQUEST, "Travel schedule not found"));
-
-        scheduleRepository.deleteById(travelScheduleId);
+    @Transactional
+    public void deleteSchedule(UUID travelId, UUID travelScheduleId) {
+        scheduleRepository.findByIdAndTravelId(travelScheduleId, travelId)
+                .orElseThrow(() -> new UserFaultException(
+                        HttpStatus.BAD_REQUEST, "Travel schedule not found"));
+        scheduleRepository.deleteByIdAndTravelId(travelScheduleId, travelId);
     }
 }

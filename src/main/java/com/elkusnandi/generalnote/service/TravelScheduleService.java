@@ -13,8 +13,8 @@ public interface TravelScheduleService {
 
     TravelScheduleResponse createSchedule(UUID travelId, TravelScheduleRequest schedule);
 
-    TravelScheduleResponse editSchedule(UUID travelScheduleId, TravelScheduleRequest schedule);
+    TravelScheduleResponse editSchedule(UUID travelId, UUID travelScheduleId, TravelScheduleRequest schedule);
 
-    void deleteSchedule(UUID travelScheduleId);
+    void deleteSchedule(UUID travelId, UUID travelScheduleId);
 
 }
