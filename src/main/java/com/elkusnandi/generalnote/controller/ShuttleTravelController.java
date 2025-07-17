@@ -10,6 +10,7 @@ import com.elkusnandi.generalnote.response.TravelRouteResponse;
 import com.elkusnandi.generalnote.response.TravelScheduleResponse;
 import com.elkusnandi.generalnote.service.TravelScheduleService;
 import com.elkusnandi.generalnote.service.TravelService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,12 +37,13 @@ public class ShuttleTravelController {
     }
 
     @PostMapping()
-    public BaseResponse<TravelResponse> createTravel(@RequestBody TravelRequest request) {
+    public BaseResponse<TravelResponse> createTravel(@Valid @RequestBody TravelRequest request) {
         return new BaseResponse<>(service.createNewTravel(request), HttpStatus.OK, true, "");
     }
 
     @PostMapping("/{travelId}")
     public BaseResponse<List<TravelRouteResponse>> createTravelRoute(
+            @Valid
             @PathVariable String travelId,
             @RequestBody List<TravelRouteRequest> request
     ) {
@@ -55,6 +57,7 @@ public class ShuttleTravelController {
 
     @PutMapping("/{travelId}")
     public BaseResponse<List<TravelRouteResponse>> editTravelRoute(
+            @Valid
             @PathVariable String travelId,
             @RequestBody List<TravelRouteEditRequest> request
     ) {
@@ -95,6 +98,7 @@ public class ShuttleTravelController {
 
     @PostMapping("/{travelId}/schedule")
     public BaseResponse<TravelScheduleResponse> createTravelSchedule(
+            @Valid
             @PathVariable String travelId,
             @RequestBody TravelScheduleRequest travelScheduleRequest
     ) {
@@ -108,6 +112,7 @@ public class ShuttleTravelController {
 
     @PutMapping("/{travelId}/schedule/{travelScheduleId}")
     public BaseResponse<TravelScheduleResponse> editTravelSchedule(
+            @Valid
             @PathVariable String travelId,
             @PathVariable String travelScheduleId,
             @RequestBody TravelScheduleRequest travelScheduleRequest
