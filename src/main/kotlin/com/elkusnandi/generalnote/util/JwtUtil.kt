@@ -26,9 +26,9 @@ object JwtUtil {
             .build()
             .parseClaimsJws(token).body
 
-    fun isValid(token: String, userId: String): Boolean {
+    fun checkAndGetClaims(token: String): Claims? {
         try {
-            return getAllClaims(token).subject == userId && getAllClaims(token).expiration.after(Date())
+            return getAllClaims(token)
         } catch (_: SignatureException) {
 
         } catch (_: MalformedJwtException) {
@@ -40,7 +40,7 @@ object JwtUtil {
         } catch (_: IllegalArgumentException) {
 
         }
-        return false
+        return null
     }
 
 }

@@ -1,4 +1,4 @@
-package com.elkusnandi.generalnote.controller
+package com.elkusnandi.generalnote.exception
 
 import com.elkusnandi.generalnote.common.base.BaseResponse
 import io.swagger.v3.oas.annotations.Hidden

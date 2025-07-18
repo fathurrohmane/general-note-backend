@@ -2,6 +2,7 @@ package com.elkusnandi.generalnote.filter
 
 import com.elkusnandi.generalnote.service.UserService
 import com.elkusnandi.generalnote.util.JwtUtil
+import io.jsonwebtoken.Jwt
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -24,16 +25,17 @@ class JwtRequestFilter(
         val token = request.getHeader("Authorization")?.substringAfter("Bearer ")
 
         if (token?.isNotBlank() == true) {
-            val userName = JwtUtil.getAllClaims(token).subject
+            if (SecurityContextHolder.getContext().authentication == null) {
+                val claims = JwtUtil.checkAndGetClaims(token)
 
-            if (userName != null && SecurityContextHolder.getContext().authentication == null) {
-                val userDetails = userService.loadUserByUsername(userName)
-                if (JwtUtil.isValid(token, userDetails.username)) {
+                if (claims != null) {
+                    val userDetails = userService.loadUserByUsername(claims.subject)
                     val auth = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
                     auth.details = WebAuthenticationDetailsSource().buildDetails(request)
                     SecurityContextHolder.getContext().authentication = auth
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid jwt token")
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired jwt token")
+                    return
                 }
             }
         }
