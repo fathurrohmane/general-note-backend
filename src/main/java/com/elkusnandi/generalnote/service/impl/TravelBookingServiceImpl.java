@@ -45,7 +45,7 @@ public class TravelBookingServiceImpl implements TravelBookingService {
     }
 
     @Override
-    public List<TravelBookingResponse> getBookingByUser(UUID userId) {
+    public List<TravelBookingResponse> getBookingByUser(Long userId) {
         return travelBookingRepository.findByCustomerId(userId).stream()
                 .map(TravelBookingMapper.INSTANCE::entityToResponse).toList();
     }

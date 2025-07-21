@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface TravelBookingRepository extends JpaRepository<TravelBooking, UUID> {
 
-    List<TravelBooking> findByCustomerId(UUID customerId);
+    List<TravelBooking> findByCustomerId(Long customerId);
 
     List<TravelBooking> findByScheduleId(UUID scheduleId);
 

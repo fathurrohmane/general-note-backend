@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface TravelBookingService {
 
-    List<TravelBookingResponse> getBookingByUser(UUID userId);
+    List<TravelBookingResponse> getBookingByUser(Long userId);
 
     List<TravelBookingResponse> getBookingByScheduleId(UUID scheduleId);
 
