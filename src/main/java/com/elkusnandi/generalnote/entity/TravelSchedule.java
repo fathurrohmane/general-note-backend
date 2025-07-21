@@ -28,5 +28,16 @@ public class TravelSchedule {
 
     @ManyToOne
     @JoinColumn(name = "travel_id")
-    private Travel travel;
+    private Travel travel; // todo deprecated
+
+    @ManyToOne
+    @JoinColumn(name = "travel_route_id")
+    private TravelRoute travelRoute;
+
+    public TravelSchedule(UUID id, LocalDate date, LocalTime time, TravelRoute travelRoute) {
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.travelRoute = travelRoute;
+    }
 }

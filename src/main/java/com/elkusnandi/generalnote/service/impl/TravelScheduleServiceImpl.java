@@ -1,15 +1,18 @@
 package com.elkusnandi.generalnote.service.impl;
 
 import com.elkusnandi.generalnote.entity.Travel;
+import com.elkusnandi.generalnote.entity.TravelRoute;
 import com.elkusnandi.generalnote.entity.TravelSchedule;
 import com.elkusnandi.generalnote.exception.UserFaultException;
 import com.elkusnandi.generalnote.mapper.TravelScheduleMapper;
 import com.elkusnandi.generalnote.repository.TravelRepository;
+import com.elkusnandi.generalnote.repository.TravelRouteRepository;
 import com.elkusnandi.generalnote.repository.TravelScheduleRepository;
 import com.elkusnandi.generalnote.request.TravelScheduleRequest;
 import com.elkusnandi.generalnote.response.TravelScheduleResponse;
 import com.elkusnandi.generalnote.service.TravelScheduleService;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +27,17 @@ public class TravelScheduleServiceImpl implements TravelScheduleService {
 
     private final TravelRepository travelRepository;
 
-    public TravelScheduleServiceImpl(TravelScheduleRepository scheduleRepository, TravelRepository travelRepository) {
+    private final TravelRouteRepository travelRouteRepository;
+
+    @Autowired
+    public TravelScheduleServiceImpl(
+            TravelScheduleRepository scheduleRepository,
+            TravelRepository travelRepository,
+            TravelRouteRepository travelRouteRepository
+    ) {
         this.scheduleRepository = scheduleRepository;
         this.travelRepository = travelRepository;
+        this.travelRouteRepository = travelRouteRepository;
     }
 
     @Override
@@ -45,8 +56,8 @@ public class TravelScheduleServiceImpl implements TravelScheduleService {
     }
 
     @Override
-    public TravelScheduleResponse createSchedule(UUID travelId, TravelScheduleRequest schedule) {
-        Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new UserFaultException(
+    public TravelScheduleResponse createSchedule(UUID travelRouteId, TravelScheduleRequest schedule) {
+        TravelRoute travelRoute = travelRouteRepository.findById(travelRouteId).orElseThrow(() -> new UserFaultException(
                 HttpStatus.BAD_REQUEST,
                 "Travel not found"
         ));
@@ -55,7 +66,7 @@ public class TravelScheduleServiceImpl implements TravelScheduleService {
                 UUID.randomUUID(),
                 schedule.getDate(),
                 schedule.getTime(),
-                travel
+                travelRoute
         ));
         return TravelScheduleMapper.INSTANCE.entityToResponse(travelSchedule);
     }
