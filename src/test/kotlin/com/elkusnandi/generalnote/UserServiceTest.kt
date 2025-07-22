@@ -4,6 +4,7 @@ import com.elkusnandi.generalnote.entity.Role
 import com.elkusnandi.generalnote.entity.Users
 import com.elkusnandi.generalnote.repository.RoleRepository
 import com.elkusnandi.generalnote.repository.UserRepository
+import com.elkusnandi.generalnote.repository.UserTokenRepository
 import com.elkusnandi.generalnote.request.RegisterRequest
 import com.elkusnandi.generalnote.service.UserServiceImpl
 import org.apache.coyote.BadRequestException
@@ -30,6 +31,9 @@ class UserServiceTest {
 
     @Mock
     lateinit var roleRepository: RoleRepository
+
+    @Mock
+    lateinit var userTokenRepository: UserTokenRepository
 
     @InjectMocks
     lateinit var userService: UserServiceImpl
