@@ -1,5 +1,6 @@
 package com.elkusnandi.generalnote.request
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -22,4 +23,7 @@ data class RegisterRequest(
         maxLength = 40
     )
     val password: String
-)
+) {
+    @JsonIgnore
+    var userAgent: String = ""
+}

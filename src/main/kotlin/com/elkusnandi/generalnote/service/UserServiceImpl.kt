@@ -1,9 +1,13 @@
 package com.elkusnandi.generalnote.service
 
 import com.elkusnandi.generalnote.entity.Role
+import com.elkusnandi.generalnote.entity.UserToken
 import com.elkusnandi.generalnote.entity.Users
+import com.elkusnandi.generalnote.exception.UserFaultException
 import com.elkusnandi.generalnote.repository.RoleRepository
 import com.elkusnandi.generalnote.repository.UserRepository
+import com.elkusnandi.generalnote.repository.UserTokenRepository
+import com.elkusnandi.generalnote.request.RefreshTokenRequest
 import com.elkusnandi.generalnote.request.RegisterRequest
 import com.elkusnandi.generalnote.response.LoginResponse
 import com.elkusnandi.generalnote.response.RegisterResponse
@@ -16,12 +20,15 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val userTokenRepository: UserTokenRepository
 ) : UserService {
 
     override fun register(registerRequest: RegisterRequest): RegisterResponse {
@@ -54,6 +61,7 @@ class UserServiceImpl(
         )
     }
 
+    @Transactional
     override fun login(loginRequest: RegisterRequest): LoginResponse {
         // Check if user exists
         val currentUser = userRepository.findByUserName(loginRequest.userName.lowercase())
@@ -61,11 +69,55 @@ class UserServiceImpl(
 
         // Check user password
         if (passwordEncoder.matches(loginRequest.password, currentUser.password)) {
-            val token = JwtUtil.generateToken(currentUser.id.toString())
-            return LoginResponse(token = token)
+            val token = JwtUtil.generateToken(currentUser.id.toString(), UUID.randomUUID().toString())
+            val refreshTokenId = UUID.randomUUID().toString()
+            val refreshToken = JwtUtil.generateToken(currentUser.id.toString(), refreshTokenId, true)
+
+            userTokenRepository.save(
+                UserToken(
+                    tokenId = refreshTokenId,
+                    userAgent = loginRequest.userAgent
+                ).apply {
+                    user = currentUser
+                }
+            )
+
+            return LoginResponse(token = token, refreshToken = refreshToken)
         } else {
             throw BadRequestException("Username or password not match")
         }
+    }
+
+    override fun refreshToken(refreshTokenRequest: RefreshTokenRequest): LoginResponse {
+        val claims = JwtUtil.checkAndGetClaims(refreshTokenRequest.refreshToken)
+            ?: throw UserFaultException(message = "Refresh token not valid")
+
+        val userName = claims.subject ?: throw UserFaultException(message = "Claim subject not found in the token")
+
+        val currentUser = userRepository.findById(userName.toLong())
+            .orElseThrow { throw UserFaultException(message = "User not found or subject not found in the token") }
+        val userToken = userTokenRepository.findByUserId(currentUser.id)
+
+        return if (userToken != null && userToken.tokenId == claims.id) {
+            val token = JwtUtil.generateToken(currentUser.id.toString(), UUID.randomUUID().toString())
+            val refreshTokenId = UUID.randomUUID().toString()
+            val refreshToken = JwtUtil.generateToken(currentUser.id.toString(), refreshTokenId, true)
+
+            userTokenRepository.save(
+                UserToken(
+                    id = userToken.id,
+                    tokenId = refreshTokenId,
+                    userAgent = refreshTokenRequest.userAgent
+                ).apply {
+                    user = currentUser
+                }
+            )
+
+            LoginResponse(token = token, refreshToken = refreshToken)
+        } else {
+            throw UserFaultException(message = "Refresh token not found or match for this user")
+        }
+
     }
 
     @PreAuthorize("hasRole('admin')")
