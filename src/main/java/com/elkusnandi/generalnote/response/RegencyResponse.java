@@ -10,7 +10,7 @@ public class RegencyResponse {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("short_id")
+    @JsonProperty("shortId")
     private String shortId;
 
     @JsonProperty("name")
