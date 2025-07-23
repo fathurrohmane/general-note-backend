@@ -8,11 +8,13 @@ import com.elkusnandi.generalnote.service.NoteService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 
+@Tag(name = "Note App Controller", description = "Handle All endpoints for basic note taking app")
 @RestController
 @RequestMapping("/api/notes")
 class NoteController(
@@ -99,7 +101,7 @@ class NoteController(
     )
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = ""),
+            ApiResponse(responseCode = "200", description = "Note deleted"),
             ApiResponse(responseCode = "403", description = "Access denied")
         ]
     )
