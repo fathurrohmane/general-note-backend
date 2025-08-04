@@ -1,0 +1,2 @@
+ALTER TABLE short_url
+ALTER COLUMN counter TYPE BIGINT;

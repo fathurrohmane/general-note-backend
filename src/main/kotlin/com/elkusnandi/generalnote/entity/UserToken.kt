@@ -14,7 +14,7 @@ class UserToken(
     val tokenId: String = "",
     @Column(name = "user_agent")
     val userAgent: String = "",
-    @Column(name = "created_date")
+    @Column(name = "created_at")
     val createdDate: LocalDateTime = LocalDateTime.now()
 ) {
 

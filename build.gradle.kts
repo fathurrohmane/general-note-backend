@@ -30,8 +30,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // Sqlite
-    implementation("org.hibernate.orm:hibernate-community-dialects:6.6.13.Final")
-    implementation("org.xerial:sqlite-jdbc:3.49.1.0")
+    implementation("org.postgresql:postgresql:42.7.3")
 
     // Jwt
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")

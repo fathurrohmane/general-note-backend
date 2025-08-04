@@ -11,8 +11,7 @@ data class Notes(
     val id: Long = -1,
     @Column(name = "title")
     val title: String = "",
-    @Column(name = "content")
-    @Lob
+    @Column(name = "content", columnDefinition = "TEXT")
     val content: String = "",
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
