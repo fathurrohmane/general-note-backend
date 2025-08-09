@@ -11,7 +11,7 @@ import java.time.Instant;
 @Table(
         name = "short_url",
         indexes = {
-                @Index(name = "idx_short_id", columnList = "short_id")
+                @Index(name = "short_url_short_id_index", columnList = "short_id")
         }
 )
 @NoArgsConstructor
@@ -30,12 +30,18 @@ public class ShortUrl {
     private Instant dateCreated;
     @Column(name = "expiration_date")
     private Instant expirationDate;
-
     @ManyToOne()
     @JoinColumn(name = "created_by")
     private Users createdBy;
 
-    public ShortUrl(String longUrl, String shortId, long counter, Instant dateCreated, Instant expirationDate, Users createdBy) {
+    public ShortUrl(
+            String longUrl,
+            String shortId,
+            long counter,
+            Instant dateCreated,
+            Instant expirationDate,
+            Users createdBy
+    ) {
         this.longUrl = longUrl;
         this.shortId = shortId;
         this.counter = counter;
