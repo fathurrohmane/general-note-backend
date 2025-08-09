@@ -1,5 +1,5 @@
 # Use a lightweight JDK base image
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine
 
 # Create a user (optional security)
 RUN adduser -D springuser
@@ -15,4 +15,4 @@ COPY build/libs/app.jar app.jar
 EXPOSE 8080
 
 # Run Spring Boot
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=dev"]
