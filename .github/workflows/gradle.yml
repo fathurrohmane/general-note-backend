@@ -48,7 +48,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: |
-          build/libs/app.jar
+          build/libs/*
           Dockerfile
           docker-compose.yml
         target: "~/springapp"
