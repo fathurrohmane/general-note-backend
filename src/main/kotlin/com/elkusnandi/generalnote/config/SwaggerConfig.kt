@@ -15,7 +15,12 @@ class SwaggerConfig {
     fun customOpenAPI(): OpenAPI {
         val securitySchemeName = "bearerAuth"
         return OpenAPI()
-            .servers(listOf(Server().url("https://api.malubertanya.com")))
+            .servers(
+                listOf(
+                    Server().url("https://api.malubertanya.com"),
+                    Server().url("https://api-dev.malubertanya.com")
+                )
+            )
             .info(Info().title("Spring Boot Playground").version("0.1"))
             .addSecurityItem(SecurityRequirement().addList(securitySchemeName))
             .components(

@@ -47,7 +47,10 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "."
+        source: |
+          build/libs/app.jar
+          Dockerfile
+          docker-compose.yml
         target: "~/springapp"
 
     - name: Create .env and compose up on VPS
@@ -58,6 +61,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
+          mkdir -p springapp
           cd ~/springapp
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > .env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
