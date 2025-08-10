@@ -41,7 +41,7 @@ jobs:
       run: ./gradlew build
 
     - name: Debug JAR location
-      run: ls -lah build/libs || ls -lah target ||
+      run: ls -lah build/libs || ls -lah target
 
     - name: Copy project to VPS
       uses: appleboy/scp-action@v0.1.7
