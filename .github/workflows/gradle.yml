@@ -40,8 +40,11 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build
 
-    - name: Debug JAR location
-      run: ls -lah build/libs || ls -lah target
+    - name: Show current directory
+      run: |
+        pwd
+        ls -lah
+        find . -name "app.jar"
 
     - name: Copy project to VPS
       uses: appleboy/scp-action@v0.1.7
@@ -51,9 +54,9 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: |
-          build/libs/*.jar
-          Dockerfile
-          docker-compose.yml
+          ./build/libs/app.jar
+          ./Dockerfile
+          ./docker-compose.yml
         target: "~/springapp"
 
     - name: Create .env and compose up on VPS
