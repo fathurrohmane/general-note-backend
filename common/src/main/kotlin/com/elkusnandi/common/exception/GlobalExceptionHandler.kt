@@ -95,7 +95,7 @@ class GlobalExceptionHandler {
             data = null,
             status = exception.statusCode,
             success = false,
-            exception.message
+            exception.message.toString()
         )
     }
 }
